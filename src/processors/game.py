@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from math import cos, pi, sin
-from assets import ARROW
-from src.components.ball import Arrow, Ball
+from random import randrange
+from assets import ARROW, FONT, TITLE_SCREEN
+from src.components.ball import Arrow, Ball, InvBall
 import esper
 from src.components.transform import Position
 import pygame as pg
@@ -17,10 +18,28 @@ def bounce(velocity: pg.Vector2, normal: pg.Vector2) -> float:
 @dataclass
 class GameProcessor(esper.Processor):
     screen: pg.Surface
+    game: bool = False
+    button = pg.Rect(235, 323, 170, 63)
+    level = 1
+    shot = 0
+
+    def main_menu(self):
+        self.screen.blit(TITLE_SCREEN)
+        if self.button.collidepoint(pg.mouse.get_pos()):
+            if pg.mouse.get_pressed()[0]:
+                self.game = True
 
     def process(self, dt: float):
+        if not self.game:
+            self.main_menu()
+            return
+        
         b_pos: Position | None = None
         b: Ball | None = None
+        ipos: Position | None = None
+
+        for e, _ in esper.get_component(InvBall):
+            ipos = esper.try_component(e, Position)
 
         for e, ball in esper.get_component(Ball):
             b = ball
@@ -31,6 +50,17 @@ class GameProcessor(esper.Processor):
             pos = esper.try_component(e, Position)
             b_pos = pos
             
+            if ipos and pos:
+                if (pg.Vector2(ipos.x, ipos.y) - pg.Vector2(pos.x, pos.y)).length_squared() < 20*20:
+                    ball.speed = 0
+                    ball.velocity = pg.Vector2(0, 0)
+                    self.level += 1
+                    self.shot = 0
+                    ipos.x = randrange(0, 640 - 40)
+                    ipos.y = randrange(0, 480 - 40)
+                    pos.x = 640/2
+                    pos.y = 480/2
+
             keys = pg.key.get_pressed()
             
             if ball.speed == 0:
@@ -44,6 +74,7 @@ class GameProcessor(esper.Processor):
                     ball.strength -= 2 * dt
                 if keys[pg.K_SPACE]:
                     ball.speed = 200 * ball.strength
+                    self.shot += 1
 
                 ball.strength = min(max(ball.strength, 1), 3)
 
@@ -89,3 +120,6 @@ class GameProcessor(esper.Processor):
             rect = rotated.get_rect(center=arrow_center)
             if b and b.speed == 0:
                 self.screen.blit(rotated, rect)
+
+    
+        self.screen.blit(FONT.render("Round " + str(self.level) + " Shot " + str(self.shot), True, (0, 0, 0)), (20, 0))

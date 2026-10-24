@@ -1,3 +1,5 @@
+from random import randrange
+
 import pygame as pg
 import esper
 
@@ -10,14 +12,14 @@ from src.processors.rendering import RenderProcessor
 
 pg.init()
 
+pg.display.set_caption("Reverse Golf Game")
 screen = pg.display.set_mode((640, 480))
-
 esper.add_processor(RenderProcessor(screen))
 esper.add_processor(GameProcessor(screen))
 
 esper.create_entity(Position(320 - 20, 240 - 20), Sprite(BALL), Ball(pg.Vector2(0, 0), -90, 0))
 esper.create_entity(Position(320 - 20, 240 - 20), Arrow())
-esper.create_entity(Position(100, 100), InvBall(), Sprite(INVERSE_BALL))
+esper.create_entity(Position(randrange(0, 640 - 40), randrange(0, 480 - 40)), InvBall(), Sprite(INVERSE_BALL))
 
 clock = pg.time.Clock()
 dt = 0.1

@@ -1,8 +1,5 @@
-# Ball launch game
-```
-im not very good at using ecs :(
-shouldn't have used an ecs
-```
+# Reverse golf game
+Play as the hole and try to get the ball.
 
 ## Run
 ```sh

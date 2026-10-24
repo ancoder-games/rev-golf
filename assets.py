@@ -24,3 +24,5 @@ bg = pg.image.load("assets/background.png")
 BACKGROUND = pg.Surface(bg.get_size(), pg.SRCALPHA)
 BACKGROUND.fill((50, 168, 82))
 BACKGROUND.blit(bg, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
+
+TITLE_SCREEN = pg.image.load("assets/title_screen.png")

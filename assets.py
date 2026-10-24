@@ -1,3 +1,11 @@
+import os
+import sys
+
+base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+os.chdir(base_path)
+
+from os import path
+
 import pygame as pg
 
 pg.font.init()
@@ -20,9 +28,9 @@ ARROW = pg.Surface((100, 40), pg.SRCALPHA)
 # ARROW.set_colorkey((255, 255, 255))
 ARROW.blit(FONT.render("➜", True, (0, 0, 0)), (50, -15))
 
-bg = pg.image.load("assets/background.png")
+bg = pg.image.load(path.join("assets", "background.png"))
 BACKGROUND = pg.Surface(bg.get_size(), pg.SRCALPHA)
 BACKGROUND.fill((50, 168, 82))
 BACKGROUND.blit(bg, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
 
-TITLE_SCREEN = pg.image.load("assets/title_screen.png")
+TITLE_SCREEN = pg.image.load(path.join("assets", "title_screen.png"))
